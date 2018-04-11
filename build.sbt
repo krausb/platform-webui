@@ -7,7 +7,7 @@
 // Projects
 // *****************************************************************************
 
-lazy val `streamarchitect-io-plattform-webui` =
+lazy val `streamarchitect-io-platform-webui` =
   project
     .in(file("."))
     .enablePlugins(PlayScala)
@@ -16,8 +16,8 @@ lazy val `streamarchitect-io-plattform-webui` =
       libraryDependencies ++= Seq(
         library.scalaCheck % Test,
         library.scalaTest  % Test,
-        library.scalaTestPlay,
-	guice,
+        library.scalaTestPlay % Test,
+	      guice,
         library.typesafeConfig,
         library.domain
       ),
@@ -49,7 +49,7 @@ lazy val library =
     }
     val scalaCheck       = "org.scalacheck"           %% "scalacheck"               % Version.scalaCheck
     val scalaTest        = "org.scalatest"            %% "scalatest"                % Version.scalaTest
-    val scalaTestPlay    = "org.scalatestplus.play"   %% "scalatestplus-play"       % Version.scalaTestPlay % Test
+    val scalaTestPlay    = "org.scalatestplus.play"   %% "scalatestplus-play"       % Version.scalaTestPlay
     val logback          = "ch.qos.logback"             %   "logback-classic"           % Version.logback
     val scalaLogging     = "com.typesafe.scala-logging" %%  "scala-logging"             % Version.scalaLogging
     val typesafeConfig   = "com.typesafe"             % "config"                    % Version.typesafeConfig
