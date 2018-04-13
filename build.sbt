@@ -23,7 +23,8 @@ lazy val `streamarchitect-io-platform-webui` =
       ),
       libraryDependencies ++= library.log,
       libraryDependencies ++= library.akkaBundle,
-      libraryDependencies ++= library.kafkaBundle
+      libraryDependencies ++= library.kafkaBundle,
+      libraryDependencies ++= library.webJars
     )
 
 // *****************************************************************************
@@ -40,21 +41,27 @@ lazy val library =
       val logback        = "1.2.3"
       val scalaLogging   = "3.8.0"
       val typesafeConfig = "1.3.1"
-      val alpakka        = "0.9"
       val akka           = "2.5.6"
       val domain         = "1.0.0-SNAPSHOT"
       val kafka          = "1.1.0"
       val akkaKafkaStreams = "0.20"
-
+      val webJarsPlay      = "2.6.1"
+      val webJarsFlot      = "0.8.3"
+      val webJarsBootstrap = "3.3.6"
+      val logstash         = "4.11"
     }
     val scalaCheck       = "org.scalacheck"           %% "scalacheck"               % Version.scalaCheck
     val scalaTest        = "org.scalatest"            %% "scalatest"                % Version.scalaTest
     val scalaTestPlay    = "org.scalatestplus.play"   %% "scalatestplus-play"       % Version.scalaTestPlay
-    val logback          = "ch.qos.logback"             %   "logback-classic"           % Version.logback
-    val scalaLogging     = "com.typesafe.scala-logging" %%  "scala-logging"             % Version.scalaLogging
+    val logback          = "ch.qos.logback"             %   "logback-classic"       % Version.logback
+    val scalaLogging     = "com.typesafe.scala-logging" %%  "scala-logging"         % Version.scalaLogging
     val typesafeConfig   = "com.typesafe"             % "config"                    % Version.typesafeConfig
 
-    val alpakka          = "com.lightbend.akka"       %% "akka-stream-alpakka-mqtt" % Version.alpakka
+    val webJarsPlay      = "org.webjars"              %% "webjars-play"             % Version.webJarsPlay
+    val webJarsFlot      = "org.webjars"              % "flot"                      % Version.webJarsFlot
+    val webJarsBootstrap = "org.webjars"              % "bootstrap"                 % Version.webJarsBootstrap
+    val logstash         = "net.logstash.logback"     % "logstash-logback-encoder"  % Version.logstash
+
     val akka             = "com.typesafe.akka"        %% "akka-actor"               % Version.akka
     val akkaLog          = "com.typesafe.akka"        %% "akka-slf4j"               % Version.akka
     val akkaStream       = "com.typesafe.akka"        %% "akka-stream"              % Version.akka
@@ -65,9 +72,10 @@ lazy val library =
 
     val domain           = "io.streamarchitect"       %% "streamarchitect-io-platform-domain" % Version.domain
 
-    val akkaBundle = Seq(akka, akkaLog, akkaStream, akkaTestKit)
+    val webJars     = Seq(webJarsPlay, webJarsFlot, webJarsBootstrap)
+    val akkaBundle  = Seq(akka, akkaLog, akkaStream, akkaTestKit)
     val kafkaBundle = Seq(kafka, akkaKafkaStreams)
-    val log = Seq(logback, scalaLogging)
+    val log         = Seq(logback, scalaLogging, logstash)
 
     /**
       * Listing of the dependencies that are being globally excluded

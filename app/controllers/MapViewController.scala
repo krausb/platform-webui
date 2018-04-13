@@ -9,10 +9,10 @@ import scala.concurrent.ExecutionContext
 
 /**
   * This controller creates an `Action` to handle HTTP requests to the
-  * application's home page.
+  * application's map view page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents)(
+class MapViewController @Inject()(cc: ControllerComponents)(
     implicit actorSystem: ActorSystem,
     executionContext: ExecutionContext,
     webJarsUtil: org.webjars.play.WebJarsUtil)
@@ -25,7 +25,7 @@ class HomeController @Inject()(cc: ControllerComponents)(
     * will be called when the application receives a `GET` request with
     * a path of `/`.
     */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+  def mapView() = Action { implicit request: Request[AnyContent] =>
+    Ok(views.html.mapview())
   }
 }
