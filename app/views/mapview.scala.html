@@ -1,5 +1,11 @@
-@()(implicit webJarsUtil: org.webjars.play.WebJarsUtil)
+@(webSocketUrl: String)(implicit webJarsUtil: org.webjars.play.WebJarsUtil)
 
 @main("Map View :-)") {
-  <h1>Map View!</h1>
+
+  <div id="map"></div>
+  <div id="wsState">not connected</div>
+  @Html(webJarsUtil.script("jquery.min.js"))
+  @Html(webJarsUtil.script("jquery.flot.min.js"))
+  <script id="data-stream-script" type='text/javascript' src='@routes.Assets.at("javascripts/map-stream.js")' data-url='@webSocketUrl'></script>
+
 }

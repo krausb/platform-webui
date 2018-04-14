@@ -48,6 +48,7 @@ lazy val library =
       val webJarsPlay      = "2.6.1"
       val webJarsFlot      = "0.8.3"
       val webJarsBootstrap = "3.3.6"
+      val webJarsLeaflet   = "1.3.1"
       val logstash         = "4.11"
     }
     val scalaCheck       = "org.scalacheck"           %% "scalacheck"               % Version.scalaCheck
@@ -60,6 +61,7 @@ lazy val library =
     val webJarsPlay      = "org.webjars"              %% "webjars-play"             % Version.webJarsPlay
     val webJarsFlot      = "org.webjars"              % "flot"                      % Version.webJarsFlot
     val webJarsBootstrap = "org.webjars"              % "bootstrap"                 % Version.webJarsBootstrap
+    val webJarsLeaflet   = "org.webjars"              % "leaflet"                   % Version.webJarsLeaflet
     val logstash         = "net.logstash.logback"     % "logstash-logback-encoder"  % Version.logstash
 
     val akka             = "com.typesafe.akka"        %% "akka-actor"               % Version.akka
@@ -72,7 +74,7 @@ lazy val library =
 
     val domain           = "io.streamarchitect"       %% "streamarchitect-io-platform-domain" % Version.domain
 
-    val webJars     = Seq(webJarsPlay, webJarsFlot, webJarsBootstrap)
+    val webJars     = Seq(webJarsPlay, webJarsFlot, webJarsBootstrap, webJarsLeaflet)
     val akkaBundle  = Seq(akka, akkaLog, akkaStream, akkaTestKit)
     val kafkaBundle = Seq(kafka, akkaKafkaStreams)
     val log         = Seq(logback, scalaLogging, logstash)

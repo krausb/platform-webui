@@ -26,6 +26,7 @@ class MapViewController @Inject()(cc: ControllerComponents)(
     * a path of `/`.
     */
   def mapView() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.mapview())
+    val webSocketUrl = routes.DataStreamController.data().webSocketURL()
+    Ok(views.html.mapview(webSocketUrl))
   }
 }

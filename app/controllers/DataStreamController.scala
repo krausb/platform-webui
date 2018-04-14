@@ -7,11 +7,12 @@ import akka.event.Logging
 import akka.kafka.scaladsl.Consumer
 import akka.kafka.{ConsumerSettings, Subscriptions}
 import akka.stream.Materializer
-import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub}
+import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub, Sink, Source}
 import com.typesafe.config.ConfigFactory
 import io.streamarchitect.platform.domain.codec.DomainCodec
 import io.streamarchitect.platform.domain.telemetry.PositionedTelemetry
 import javax.inject._
+import org.apache.avro.AvroRuntimeException
 import org.apache.kafka.common.serialization.Deserializer
 import play.api._
 import play.api.mvc._
@@ -39,9 +40,12 @@ class DataStreamController @Inject()(cc: ControllerComponents)(
     Logging(actorSystem.eventStream, log.underlyingLogger.getName)
 
   log.info("Creating MergeHub source..")
-  val source = MergeHub
+  val wsIn = MergeHub
     .source[WSMessage]
-    .log("source", msg => log.info(s"WSMessage arrived: ${msg}"))
+    .log("inbound-source")
+    .recoverWithRetries(-1, { case _: Exception ⇒ Source.empty })
+
+  val wsInSink = Sink.ignore.runWith(wsIn)
 
   val consumerSettings = ConsumerSettings(
     actorSystem,
@@ -51,31 +55,41 @@ class DataStreamController @Inject()(cc: ControllerComponents)(
   log.info(s"Kafka Consumer Settings: ${consumerSettings}")
 
   log.info(s"Creating BroadcastHub sink..")
-  val sink = BroadcastHub.sink[WSMessage]
+  val wsOut = BroadcastHub.sink[WSMessage]
 
-  val dataSource =
+  val kafkaSource =
     Consumer
       .committableSource(
         consumerSettings,
         Subscriptions.topics(config.getString("dataSource.topic")))
       .map(
-        cmsg => {
-          log.info(s"Incoming msg: ${cmsg}")
-          DomainCodec
-            .decode[PositionedTelemetry](
-              cmsg.record.value(),
-              PositionedTelemetry.SCHEMA$
-            )
-            .toString
+        cmsg =>
+          try {
+            log.info(s"Incoming msg: ${cmsg}")
+            DomainCodec
+              .decode[PositionedTelemetry](
+                cmsg.record.value(),
+                PositionedTelemetry.SCHEMA$
+              )
+              .toString
+          } catch {
+            case a: AvroRuntimeException =>
+              log.error("Couldn't deserialize incoming payload.")
+              ""
+            case t: Throwable =>
+              log.error(t.getMessage, t)
+              ""
         }
       )
+      .filter(_.nonEmpty)
+      .runWith(wsOut)
 
   log.info(s"Merging websocket source with kafka source..")
 
   private val dataFlow: Flow[WSMessage, WSMessage, _] = {
-    log.error("Joining sink with source...")
+    log.info("Joining sink with source...")
     Flow[WSMessage]
-      .via(Flow.fromSinkAndSource(sink, dataSource))
+      .via(Flow.fromSinkAndSource(wsInSink, kafkaSource))
       .log("dataFlow")
   }
 
